@@ -111,6 +111,15 @@ WHERE entry_date >= "2023-10-01"
 **Data Processed:** 166 B  
 **Note:** This query processes 166 B but does not return rows with `NULL` in `entry_date`.
 
+- Date >= 2023-10-02
+```sql
+SELECT *
+FROM poc.my_partitioned_table
+WHERE entry_date >= "2023-10-02"
+```
+**Data Processed:** 106 B  
+**Note:** This query processes 106 B but does not return rows with `NULL` in `entry_date`.
+
 - Date = 2023-10-01
 ```sql
 SELECT *
@@ -166,6 +175,7 @@ WHERE entry_date IS NOT NULL
 |------------------------------------   |----------------|
 | Full Table Scan                       | 166 B          |
 | Filter (>= "2023-10-01")              | 166 B          |
+| Filter (>= "2023-10-02")              | 106 B          |
 | Filter (entry_date = "2023-10-01")    | 60 B           |
 | Filter (entry_date = "2023-10-02")    | 33 B           |
 | Filter (entry_date = "2023-10-03")    | 31 B           |
