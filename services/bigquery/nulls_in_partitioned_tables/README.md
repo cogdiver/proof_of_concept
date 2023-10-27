@@ -1,4 +1,4 @@
-# README for Null Values in Partitioned Table PoC
+# Null Values in Partitioned Table PoC
 
 ## Setup Instructions
 
