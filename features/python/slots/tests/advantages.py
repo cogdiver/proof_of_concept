@@ -66,8 +66,8 @@ def faster_access(execution_times=50000000):
     print_box(
         title="Access Times",
         rows=[
-            f"time_sin_slots: {time_sin_slots:4f}",
-            f"time_con_slots: {time_con_slots:4f}"
+            f"sin_slots: {time_sin_slots:4f}",
+            f"con_slots: {time_con_slots:4f}"
         ]
     )
 
@@ -100,24 +100,38 @@ def memory_saving(number_of_instances=1000):
     print_box(
         title="Memory Consumption",
         rows=[
-            f"memory_sin_slots: {memory_sin_slots:,.0f}",
-            f"memory_con_slots: {memory_con_slots:,.0f}"
+            f"sin_slots: {memory_sin_slots:,.0f}",
+            f"con_slots: {memory_con_slots:,.0f}"
         ]
     )
 
 
 def secure_access():
-    sin_slots = SinSlots('age_sin_slots', 123)
-    con_slots = ConSlots('age_con_slots', 123)
+    """
+    Demonstrates the secure access feature of classes with and without __slots__.
+
+    This function creates instances of two classes - SinSlots and ConSlots. SinSlots is a standard class
+    without __slots__, while ConSlots is a class with defined __slots__. It then attempts to assign values
+    to the 'identifier' and 'age' attributes of each instance and collects the results.
+
+    For the SinSlots instance (without __slots__), assigning a new attribute ('age') is successful.
+    For the ConSlots instance (with __slots__), assigning a new attribute that is not defined in __slots__
+    raises an AttributeError, showcasing the secure access feature of __slots__.
+
+    Returns: None
+    """
+    sin_slots = SinSlots('sin_slots', 123)
+    con_slots = ConSlots('con_slots', 123)
     results = []
 
     for c in (sin_slots, con_slots):
         try:
             c.identifier = 1234
+            results.append(f"{c.name}: identifier({c.identifier})")
             c.age = 25
-            results.append(f"{c.name}: identifier({c.identifier}) age({c.age})")
+            results.append(f"{c.name}: age({c.age})")
         except Exception as e:
-            results.append(f"{c.name}: identifier({c.identifier}) age({repr(e)})")
+            results.append(f"{c.name}: age({repr(e)})")
 
     print_box(
         title="Secure Access",
