@@ -30,3 +30,17 @@ class ConSlots:
 
     def attributes_access(self):
         return self.name, self.identifier
+
+
+class ConSlotsTuple:
+    """
+    A class that utilizes __slots__.
+
+    By defining __slots__, this class explicitly
+    declares the attributes it will  handle.
+    """
+    __slots__ = ('name', 'identifier')
+
+    def __init__(self, name, identifier):
+        self.name = name
+        self.identifier = identifier
