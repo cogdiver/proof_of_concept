@@ -20,7 +20,7 @@ def print_box(title, rows):
     centered within the box, and then each row of content, left-justified. Finally,
     it prints the bottom border of the box.
     """
-    width = max(len(title), *[len(r) for r in rows]) + 4
+    width = max(len(title), *[len(r) for r in rows]) + 2
 
     print("\n+ " + "-"*width + " +")
     print(f"| {title.center(width)} |")
