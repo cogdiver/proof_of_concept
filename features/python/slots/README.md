@@ -4,7 +4,7 @@
 
 Before running any tests or scripts, please follow these setup steps:
 
-1. **Environment Configuration**: Make sure you have docker installed on your machine for proof of concept initialization.
+1. **Prerequisites:** Before you begin, ensure you have [Docker](https://www.docker.com/products/docker-desktop) installed.
 
 2. **Initialization**: Run the `scripts/setup.sh` script to initialize and connect to the container from where the test commands and functions can be executed.
 
