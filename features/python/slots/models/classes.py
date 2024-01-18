@@ -22,7 +22,7 @@ class ConSlots:
     By defining __slots__, this class explicitly
     declares the attributes it will  handle.
     """
-    __slots__ = ['name', 'identifier']
+    __slots__ = ('name', 'identifier')
 
     def __init__(self, name, identifier):
         self.name = name
@@ -32,14 +32,14 @@ class ConSlots:
         return self.name, self.identifier
 
 
-class ConSlotsTuple:
+class ConSlotsList:
     """
     A class that utilizes __slots__.
 
     By defining __slots__, this class explicitly
     declares the attributes it will  handle.
     """
-    __slots__ = ('name', 'identifier')
+    __slots__ = ['name', 'identifier']
 
     def __init__(self, name, identifier):
         self.name = name
