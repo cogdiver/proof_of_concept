@@ -113,10 +113,11 @@ def secure_access():
 
     for c in (sin_slots, con_slots):
         try:
+            c.identifier = 1234
             c.age = 25
-            results.append(f"{c.name}: {c.age}")
+            results.append(f"{c.name}: identifier({c.identifier}) age({c.age})")
         except Exception as e:
-            results.append(f"{c.name}: {repr(e)}")
+            results.append(f"{c.name}: identifier({c.identifier}) age({repr(e)})")
 
     print_box(
         title="Secure Access",
