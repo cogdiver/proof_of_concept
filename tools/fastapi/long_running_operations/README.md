@@ -4,7 +4,6 @@
 This document provides a brief guide on how to get the FastAPI Proof of Concept (PoC) for long-running operations up and running on your local machine.
 
 
-
 1. **Prerequisites:** Before you begin, ensure you have [Docker](https://www.docker.com/products/docker-desktop) installed.
 
 2. **Initialize the environment:** Run the `scripts/setup.sh` script to build and start the Docker container. This script takes care of setting up everything needed for the PoC.
