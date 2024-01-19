@@ -20,6 +20,15 @@ This repository is dedicated to:
 - `/features`: Focuses on specific features or functionality tests across different technologies.
 - `/docs`: Documentation, including how-tos, project summaries, and learning resources.
 
+## Proofs of Concept Developed
+
+|Category|Subcategory|PoC Name|
+|-|-|-|
+|Features|Python  |[Slots](./features/python/slots/)
+|        |Python  |[Imports](./features/python/imports/)
+|Services|BigQuery|[Nulls in Partitioned Tables](./services/bigquery/nulls_in_partitioned_tables/)
+|Tools   |FastAPI |[Long Running Operations](./tools/fastapi/long_running_operations/)
+
 ## Contributing
 
 We welcome contributions! Whether it's adding a new PoC, enhancing an existing one, or providing documentation, your input is valuable. Please see our [Contributing Guidelines](CONTRIBUTING.md) for more information on how to get involved.
