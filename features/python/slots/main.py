@@ -20,10 +20,10 @@ def main():
             # Execute the function corresponding to the command
             commands[command]()
         else:
-            print(f"Comando desconocido: {command}")
+            print(f"Unknown command: {command}")
 
     else:
-        print("Por favor, proporciona un comando.")
+        print("Please provide a command.")
 
 
 if __name__ == "__main__":
