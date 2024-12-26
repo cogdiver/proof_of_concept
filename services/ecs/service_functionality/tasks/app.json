@@ -1,0 +1,22 @@
+[
+  {
+    "name": "poc-app",
+    "image": "${account_id}.dkr.ecr.${region}.amazonaws.com/${service_name}_repo:latest",
+    "essential": true,
+    "portMappings": [
+      {
+        "containerPort": 8080,
+        "hostPort": 8080,
+        "protocol": "tcp"
+      }
+    ],
+    "logConfiguration": {
+      "logDriver": "awslogs",
+      "options": {
+        "awslogs-group": "/ecs/${service_name}",
+        "awslogs-region": "${region}",
+        "awslogs-stream-prefix": "ecs"
+      }
+    }
+  }
+]

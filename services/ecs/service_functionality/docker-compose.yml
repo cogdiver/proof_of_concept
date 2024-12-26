@@ -7,3 +7,17 @@ services:
       - "8080:8080"
     volumes:
       - ./app:/app
+
+  poc-iac:
+    container_name: poc-iac
+    build:
+      context: .
+      dockerfile: ./iac/Dockerfile
+    entrypoint: tail -f /dev/null
+    volumes:
+      - ./iac:/app/iac
+      - ./scripts:/app/scripts
+      - ./tasks:/app/tasks
+    env_file:
+      - .env
+      - ./conn/aws
