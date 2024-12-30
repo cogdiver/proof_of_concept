@@ -13,11 +13,11 @@ resource "aws_ecs_cluster" "cluster" {
 resource "aws_ecs_task_definition" "task" {
   family                   = "${var.base_name}_task"
   network_mode             = "awsvpc"
-  task_role_arn            = aws_iam_role.roles["ecsTaskExecution"].arn
-  execution_role_arn       = aws_iam_role.roles["ecsTaskExecution"].arn
+  task_role_arn            = aws_iam_role.roles["ecsServiceExecution"].arn
+  execution_role_arn       = aws_iam_role.roles["ecsServiceExecution"].arn
   requires_compatibilities = ["FARGATE"]
-  cpu                      = "2048"
-  memory                   = "4096"
+  cpu                      = "256"
+  memory                   = "512"
   container_definitions    = templatefile("../tasks/app.json", {
     account_id   = local.account_id
     region       = var.region
