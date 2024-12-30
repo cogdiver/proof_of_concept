@@ -1,6 +1,6 @@
 [
   {
-    "name": "poc-app",
+    "name": "${service_name}_app",
     "image": "${account_id}.dkr.ecr.${region}.amazonaws.com/${service_name}_repo:latest",
     "essential": true,
     "portMappings": [
@@ -10,9 +10,20 @@
         "protocol": "tcp"
       }
     ],
+    "healthCheck": {
+      "command": [
+        "CMD-SHELL",
+        "curl -f http://localhost:8080/health || exit 1"
+      ],
+      "interval": 60,
+      "timeout": 2,
+      "retries": 5,
+      "startPeriod": 30
+    },
     "logConfiguration": {
       "logDriver": "awslogs",
       "options": {
+        "awslogs-create-group": "true",
         "awslogs-group": "/ecs/${service_name}",
         "awslogs-region": "${region}",
         "awslogs-stream-prefix": "ecs"
