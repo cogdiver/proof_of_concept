@@ -1,13 +1,21 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI
 import socket
 
 app = FastAPI()
 
+
 @app.get("/get-ip")
-async def get_ip(request: Request):
+def get_ip():
     hostname = socket.gethostname()
     ip_address = socket.gethostbyname(hostname)
 
     return {
         "ip": ip_address
+    }
+
+
+@app.get("/health")
+def health():
+    return {
+        "status": "ok"
     }
