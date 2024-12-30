@@ -2,3 +2,4 @@ conn
 temp
 __pycache__
 .env
+.terraform
