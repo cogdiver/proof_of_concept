@@ -15,25 +15,17 @@ Usage() {
     exit 1
 }
 
-set -a; . ./conn/aws; set +a # Load aws credentials
-. .env # Load general environment variables
 
 
 # Function to bring services up
 Up() {
     echo "Bringing services up..."
-    REGION=$AWS_DEFAULT_REGION
-    SERVICE=$TF_VAR_aws_base_name
-    VPC_ID=$TF_VAR_aws_vpc_id
-
-    AWS_ACCOUNT_ID=`aws sts get-caller-identity --query Account --output text`
 
     # Create a bucket for the Terraform backend before deploying IaC
-    BUCKET_NAME=$(echo $SERVICE | tr '_' '-')
-    aws s3api head-bucket --bucket $BUCKET_NAME --region $REGION > /dev/null 2>&1
+    aws s3api head-bucket --bucket $SERVICE_HYPHEN --region $REGION > /dev/null 2>&1
 
     if [ $? -ne 0 ]; then
-        aws s3api create-bucket --bucket $BUCKET_NAME --region $REGION
+        aws s3api create-bucket --bucket $SERVICE_HYPHEN --region $REGION
     fi
 
     # Deploy Infrastructure
@@ -62,26 +54,53 @@ Up() {
         --output text)
 
     # Get Subnetworks
-    SUBNETS=$(aws ec2 describe-subnets \
+    SUBNETS_IDS=$(aws ec2 describe-subnets \
         --filters "Name=vpc-id,Values=$VPC_ID" \
         --query "Subnets[].SubnetId" \
         --output text \
         --output json | jq -r 'join(",")')
 
-    # Run the ECS service
-    SERVICE_ARN=`aws ecs create-service \
-        --cluster ${SERVICE}_cluster \
-        --service-name ${SERVICE}_app \
-        --task-definition ${SERVICE}_task \
-        --desired-count 1 \
-        --launch-type FARGATE \
-        --network-configuration "awsvpcConfiguration={subnets=[$SUBNETS],securityGroups=[$SG_ID],assignPublicIp=ENABLED}" \
-        --region $REGION \
-        --query "service.serviceArn" \
-        --output text`
+    # Get Target Group ARN
+    TARGET_GROUP_ARN=$(aws elbv2 describe-target-groups \
+        --names "${SERVICE_HYPHEN}-tg" \
+        --query "TargetGroups[0].TargetGroupArn" \
+        --output text)
 
-    # Save Tasks ARN
-    echo $SERVICE_ARN >> tmp/.services
+    # Verify if the ECS service already exists
+    aws ecs describe-services \
+        --cluster ${SERVICE}_cluster \
+        --services ${SERVICE}_service \
+        --query "services[0].serviceArn" \
+        --output text | grep -q "${SERVICE}_service"
+
+    # Create or update ECS service
+    if [ $? -ne 0 ]; then
+        echo "Creating ECS service..."
+        SERVICE_ARN=$(aws ecs create-service \
+            --cluster ${SERVICE}_cluster \
+            --service-name ${SERVICE}_service \
+            --task-definition ${SERVICE}_task \
+            --desired-count 1 \
+            --launch-type FARGATE \
+            --network-configuration "awsvpcConfiguration={subnets=[$SUBNETS_IDS],securityGroups=[$SG_ID],assignPublicIp=ENABLED}" \
+            --load-balancers "targetGroupArn=${TARGET_GROUP_ARN},containerName=${SERVICE}_app,containerPort=8080" \
+            --region $REGION \
+            --query "service.serviceArn" \
+            --output text)
+
+        # Save Tasks ARN
+        echo $SERVICE_ARN >> tmp/.services
+    else
+        echo "Updating ECS service..."
+        aws ecs update-service \
+            --cluster ${SERVICE}_cluster \
+            --service ${SERVICE}_service \
+            --task-definition ${SERVICE}_task \
+            --desired-count 1 \
+            --region $REGION \
+            --query "service.serviceArn" \
+            --output text
+    fi
 }
 
 # Function to bring services down
@@ -91,6 +110,19 @@ Down() {
     # Destroy Infrastructure
     ./scripts/connect.sh -s iac -u "terraform init && terraform destroy --auto-approve"
 }
+
+# Load environment variables
+set -a; . ./conn/aws; set +a # Load aws credentials
+. .env # Load general environment variables
+
+# Set variables
+REGION=$AWS_DEFAULT_REGION
+VPC_ID=$TF_VAR_aws_vpc_id
+SERVICE=$TF_VAR_aws_base_name
+SERVICE_HYPHEN=$(echo $SERVICE | tr '_' '-')
+
+# Get AWS account ID
+AWS_ACCOUNT_ID=`aws sts get-caller-identity --query Account --output text`
 
 # Main script logic
 case "$1" in
