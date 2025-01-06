@@ -45,4 +45,8 @@ resource "aws_ecs_service" "service" {
     container_name   = "${var.base_name}_app"
     container_port   = 8080
   }
+
+  lifecycle {
+    ignore_changes = [desired_count]
+  }
 }
