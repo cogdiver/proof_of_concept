@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 #####################################
 # This script deploys and tears down services on AWS ECS.
@@ -29,7 +30,7 @@ Up() {
     fi
 
     # Deploy Infrastructure
-    ./scripts/connect.sh -s iac -u "terraform init && terraform apply --auto-approve"
+    # ./scripts/connect.sh -s iac -u "terraform init && terraform apply --auto-approve"
 
     # Log in to ECR
     aws ecr get-login-password \
@@ -80,7 +81,7 @@ Up() {
             --cluster ${SERVICE}_cluster \
             --service-name ${SERVICE}_service \
             --task-definition ${SERVICE}_task \
-            --desired-count 1 \
+            --desired-count 2 \
             --launch-type FARGATE \
             --network-configuration "awsvpcConfiguration={subnets=[$SUBNETS_IDS],securityGroups=[$SG_ID],assignPublicIp=ENABLED}" \
             --load-balancers "targetGroupArn=${TARGET_GROUP_ARN},containerName=${SERVICE}_app,containerPort=8080" \
@@ -96,7 +97,6 @@ Up() {
             --cluster ${SERVICE}_cluster \
             --service ${SERVICE}_service \
             --task-definition ${SERVICE}_task \
-            --desired-count 1 \
             --region $REGION \
             --query "service.serviceArn" \
             --output text
